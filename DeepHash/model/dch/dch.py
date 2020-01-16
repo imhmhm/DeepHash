@@ -32,11 +32,13 @@ class DCH(object):
             self.stage = tf.placeholder_with_default(tf.constant(0), [])
         for k, v in vars(config).items():
             setattr(self, k, v)
-        self.file_name = 'lr_{}_cqlambda_{}_gamma_{}_dataset_{}'.format(
+        self.file_name = 'lr_{}_cqlambda_{}_gamma_{}_dataset_{}_bit_{}_iter_{}'.format(
             self.lr,
             self.q_lambda,
             self.gamma,
-            self.dataset)
+            self.dataset,
+            self.output_dim,
+            self.iter_num)
         self.save_file = os.path.join(self.save_dir, self.file_name + '.npy')
 
         # Setup session
@@ -257,6 +259,7 @@ class DCH(object):
         hash_map_rk , top5k_pr_rk = mAPs.get_mAPs_after_sign_with_feature_rerank(img_database, img_query)
 
         return {
+            'settings': self.file_name,
             'i2i_by_feature': mAPs.get_mAPs_by_feature(img_database, img_query),
             'i2i_after_sign': hash_map, # mAPs.get_mAPs_after_sign(img_database, img_query),
             'top5k_precision': top5k_pr,
