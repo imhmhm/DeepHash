@@ -416,6 +416,7 @@ class DTQ(object):
         mAPs = MAPs_CQ(C_tmp, self.subspace_num, self.subcenter_num, R)
         self.save_codes(img_database, img_query, C_tmp)
         return {
+            'settings': self.file_name,
             'map_feature_ip': mAPs.get_mAPs_by_feature(img_database, img_query),
             'map_AQD_ip':  mAPs.get_mAPs_AQD(img_database, img_query),
             'map_SQD_ip': mAPs.get_mAPs_SQD(img_database, img_query)
