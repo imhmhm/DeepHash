@@ -63,7 +63,13 @@ if not args.evaluate:
     args.model_weights = model_weights
 
 maps = model.validation(database_img, query_img, args)
+
+result_txt = './result.txt'
+f = open(result_txt, 'a')
 for key in maps:
     print(("{}\t{}".format(key, maps[key])))
+    self.file_name
+    f.write(("{}\t{}\n".format(key, maps[key])))
+f.close()
 
 pprint(vars(args))
