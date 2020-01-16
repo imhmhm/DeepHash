@@ -23,6 +23,27 @@ def get_mAPs(q_output, q_labels, db_output, db_labels, Rs, dist_type):
     return np.mean(np.array(APx))
 
 
+def get_mAPs_topk(q_output, q_labels, db_output, db_labels, Rs, dist_type):
+    dist = distance(q_output, db_output, dist_type=dist_type, pair=True)
+    unsorted_ids = np.argpartition(dist, Rs - 1)[:, :Rs]
+    APx = []
+    top = []
+    for i in range(dist.shape[0]):
+        label = q_labels[i, :]
+        label[label == 0] = -1
+        idx = unsorted_ids[i, :]
+        idx = idx[np.argsort(dist[i, :][idx])]
+        imatch = np.sum(np.equal(db_labels[idx[0: Rs], :], label), 1) > 0
+        rel = np.sum(imatch)
+        top5k = rel / 5000.0 # Rs
+        Lx = np.cumsum(imatch)
+        Px = Lx.astype(float) / np.arange(1, Rs + 1, 1)
+        if rel != 0:
+            APx.append(np.sum(Px * imatch) / rel)
+            top.append(top5k)
+    return np.mean(np.array(APx)), np.mean(np.array(top))
+
+
 def get_mAPs_rerank(q_output, q_labels, db_output, db_labels, Rs, dist_type):
     query_output = sign(q_output)
     database_output = sign(db_output)
@@ -79,6 +100,13 @@ class MAPs:
         q_output = sign(query.output)
         db_output = sign(database.output)
         return get_mAPs(q_output, query.label, db_output, database.label, Rs, dist_type)
+
+    def get_top5k_after_sign(self, database, query, Rs=None, dist_type='inner_product'):
+        if Rs is None:
+            Rs = self.R
+        q_output = sign(query.output)
+        db_output = sign(database.output)
+        return get_mAPs_topk(q_output, query.label, db_output, database.label, Rs, dist_type)
 
     def get_mAPs_after_sign_with_feature_rerank(self, database, query, Rs=None, dist_type='inner_product'):
         if Rs is None:

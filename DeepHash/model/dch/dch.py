@@ -26,7 +26,8 @@ class DCH(object):
 
         with tf.name_scope('stage'):
             # 0 for training, 1 for validation
-            self.stage = tf.placeholder_with_default(tf.constant(0), [])
+            ## tf.placeholder_with_default => tf.compat.v1.placeholder_with_default
+            self.stage = tf.compat.v1.placeholder_with_default(tf.constant(0), [])
         for k, v in vars(config).items():
             setattr(self, k, v)
         self.file_name = 'lr_{}_cqlambda_{}_gamma_{}_dataset_{}'.format(
@@ -41,11 +42,13 @@ class DCH(object):
         configProto = tf.ConfigProto()
         configProto.gpu_options.allow_growth = True
         configProto.allow_soft_placement = True
-        self.sess = tf.Session(config=configProto)
+        ## tf.Session => tf.compat.v1.Session
+        self.sess = tf.compat.v1.Session(config=configProto)
 
         # Create variables and placeholders
-        self.img = tf.placeholder(tf.float32, [None, 256, 256, 3])
-        self.img_label = tf.placeholder(tf.float32, [None, self.label_dim])
+        ## tf.placeholder => tf.compat.v1.placeholder
+        self.img = tf.compat.v1.placeholder(tf.float32, [None, 256, 256, 3])
+        self.img_label = tf.compat.v1.placeholder(tf.float32, [None, self.label_dim])
         self.img_last_layer, self.deep_param_img, self.train_layers, self.train_last_layer = self.load_model()
 
         self.global_step = tf.Variable(0, trainable=False)
@@ -201,7 +204,7 @@ class DCH(object):
 
         self.sess.close()
 
-    def validation(self, img_query, img_database, R=100):
+    def validation(self, img_query, img_database, R=5000):
         print("%s #validation# start validation" % (datetime.now()))
         query_batch = int(ceil(img_query.n_samples / float(self.val_batch_size)))
         img_query.finish_epoch()
@@ -248,9 +251,11 @@ class DCH(object):
         plot.flush(result_save_dir)
 
         prec, rec, mmap = mAPs.get_precision_recall_by_Hamming_Radius(img_database, img_query, 2)
+        hash_map , top5k_pr = mAPs.get_top5k_after_sign(img_database, img_query)
         return {
             'i2i_by_feature': mAPs.get_mAPs_by_feature(img_database, img_query),
-            'i2i_after_sign': mAPs.get_mAPs_after_sign(img_database, img_query),
+            'i2i_after_sign': hash_map, # mAPs.get_mAPs_after_sign(img_database, img_query),
+            'top5k_precision': top5k_pr,
             'i2i_prec_radius_2': prec,
             'i2i_recall_radius_2': rec,
             'i2i_map_radius_2': mmap,
