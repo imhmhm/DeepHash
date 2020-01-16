@@ -74,9 +74,13 @@ if not args.evaluate:
     train_img = dataset.import_train(data_root, args.img_tr)
     model_weights = model.train(train_img, database_img, query_img, args)
     args.model_weights = model_weights
-else:
-    maps = model.validation(database_img, query_img, args)
-    for key in maps:
-        print(("{}\t{}".format(key, maps[key])))
+# else:
+maps = model.validation(database_img, query_img, args)
+result_txt = './result.txt'
+f = open(result_txt, 'a')
+for key in maps:
+    print(("{}\t{}".format(key, maps[key])))
+    f.write(("{}\t{}\n".format(key, maps[key])))
+f.close()
 
 pprint(vars(args))
