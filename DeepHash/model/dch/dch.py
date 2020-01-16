@@ -11,7 +11,9 @@ from datetime import datetime
 from math import ceil
 
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 import model.plot as plot
 from architecture import img_alexnet_layers
@@ -27,7 +29,7 @@ class DCH(object):
         with tf.name_scope('stage'):
             # 0 for training, 1 for validation
             ## tf.placeholder_with_default => tf.compat.v1.placeholder_with_default
-            self.stage = tf.compat.v1.placeholder_with_default(tf.constant(0), [])
+            self.stage = tf.placeholder_with_default(tf.constant(0), [])
         for k, v in vars(config).items():
             setattr(self, k, v)
         self.file_name = 'lr_{}_cqlambda_{}_gamma_{}_dataset_{}'.format(
@@ -43,12 +45,12 @@ class DCH(object):
         configProto.gpu_options.allow_growth = True
         configProto.allow_soft_placement = True
         ## tf.Session => tf.compat.v1.Session
-        self.sess = tf.compat.v1.Session(config=configProto)
+        self.sess = tf.Session(config=configProto)
 
         # Create variables and placeholders
         ## tf.placeholder => tf.compat.v1.placeholder
-        self.img = tf.compat.v1.placeholder(tf.float32, [None, 256, 256, 3])
-        self.img_label = tf.compat.v1.placeholder(tf.float32, [None, self.label_dim])
+        self.img = tf.placeholder(tf.float32, [None, 256, 256, 3])
+        self.img_label = tf.placeholder(tf.float32, [None, self.label_dim])
         self.img_last_layer, self.deep_param_img, self.train_layers, self.train_last_layer = self.load_model()
 
         self.global_step = tf.Variable(0, trainable=False)

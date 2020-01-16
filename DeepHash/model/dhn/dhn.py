@@ -11,7 +11,9 @@ from datetime import datetime
 from math import ceil
 
 import numpy as np
-import tensorflow as tf
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 from architecture import img_alexnet_layers
 from evaluation import MAPs

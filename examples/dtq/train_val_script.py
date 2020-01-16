@@ -55,7 +55,8 @@ args = parser.parse_args()
 
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpus
 
-label_dims = {'cifar10': 10, 'nuswide_81': 81, 'coco': 80}
+# label_dims = {'cifar10': 10, 'nuswide_81': 81, 'coco': 80}
+label_dims = {'cifar10': 10, 'nuswide_81': 81, 'coco': 91}
 Rs = {'cifar10': 54000, 'nuswide_81': 5000, 'coco': 5000}
 args.R = Rs[args.dataset]
 args.label_dim = label_dims[args.dataset]

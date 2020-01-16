@@ -1,11 +1,14 @@
-import tensorflow as tf
-import sys 
+# import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
+
+import sys
 import numpy as np
 
 def norm(x, keepdims=False):
     '''
-    Param: 
-        x: matrix of shape (n1, n2, ..., nk) 
+    Param:
+        x: matrix of shape (n1, n2, ..., nk)
         keepdims: Whether keep dims or not
     Return: norm of matrix of shape (n1, n2, ..., n_{k-1})
     '''
@@ -28,20 +31,20 @@ def averaged_euclidean2(x1, x2):
     return tf.reduce_mean(tf.square(x1 - x2), axis=-1)
 
 def averaged_euclidean(x1, x2):
-    return tf.sqrt(averaged_euclidean2(x1, x2)) 
+    return tf.sqrt(averaged_euclidean2(x1, x2))
 
 def normed_euclidean2(x1, x2):
     return euclidean2(normed(x1), normed(x2))
 
 def inner_product(x1, x2):
-    return - tf.reduce_sum(x1 * x2, axis=-1) 
+    return - tf.reduce_sum(x1 * x2, axis=-1)
 
 def cosine(x1, x2):
     return (1 + inner_product(normed(x1), normed(x2))) / 2
 
 def distance(x1, x2=None, pair=True, dist_type="euclidean2"):
     '''
-    Param: 
+    Param:
         x2: if x2 is None, distance between x1 and x1 will be returned.
         pair: if True, for i, j, x1_i, x2_j will be calculated
               if False, for i, x1_i, x2_i will be calculated, and it requires the dimension of x1 and x2 is same.
@@ -72,7 +75,7 @@ if __name__ == "__main__":
                          [ 2.        ,  0.58578644,  0.58578644]]))
     assert distance(x1, x2, pair=True, dist_type="cosine").eval().shape == (4, 3)
     assert distance(x1, x2, pair=True, dist_type="inner_product").eval().shape == (4, 3)
-   
+
     assert np.all(distance(x1, x1[::-1], pair=False, dist_type="euclidean2").eval() == np.array([4, 8, 8, 4]))
     myAssert(distance(x1, x1[::-1], pair=False, dist_type="normed_euclidean2").eval(), np.array([ 0.36700684,  1.,  1.,  0.36700684]))
     myAssert(distance(x1, x1[::-1], pair=False, dist_type="cosine").eval(), np.array([ 0.09175171,  0.25,  0.25,  0.09175171]))
