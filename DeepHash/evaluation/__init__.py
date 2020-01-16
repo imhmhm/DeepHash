@@ -35,7 +35,11 @@ def get_mAPs_topk(q_output, q_labels, db_output, db_labels, Rs, dist_type):
         idx = idx[np.argsort(dist[i, :][idx])]
         imatch = np.sum(np.equal(db_labels[idx[0: Rs], :], label), 1) > 0
         rel = np.sum(imatch)
-        top5k = rel / 5000.0 # Rs
+
+        imatch_5k = imatch[0:5000]
+        rel_5k = np.sum(imatch_5k)
+        top5k = rel_5k / 5000.0
+
         Lx = np.cumsum(imatch)
         Px = Lx.astype(float) / np.arange(1, Rs + 1, 1)
         if rel != 0:
@@ -54,6 +58,7 @@ def get_mAPs_rerank(q_output, q_labels, db_output, db_labels, Rs, dist_type):
     ips = (bit_n - ips) / 2
 
     mAPX = []
+    top = []
     query_labels = q_labels
     database_labels = db_labels
     for i in range(ips.shape[0]):
@@ -79,10 +84,16 @@ def get_mAPs_rerank(q_output, q_labels, db_output, db_labels, Rs, dist_type):
         rel = np.sum(imatch)
         Lx = np.cumsum(imatch)
         Px = Lx.astype(float) / np.arange(1, Rs + 1, 1)
+
+        imatch_5k = imatch[0:5000]
+        rel_5k = np.sum(imatch_5k)
+        top5k = rel_5k / 5000.0
+
         if rel != 0:
             mAPX.append(np.sum(Px * imatch) / rel)
+            top.append(top5k)
 
-    return np.mean(np.array(mAPX))
+    return np.mean(np.array(mAPX)), np.mean(np.array(top))
 
 
 class MAPs:

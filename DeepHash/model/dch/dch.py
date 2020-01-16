@@ -252,10 +252,14 @@ class DCH(object):
 
         prec, rec, mmap = mAPs.get_precision_recall_by_Hamming_Radius(img_database, img_query, 2)
         hash_map , top5k_pr = mAPs.get_top5k_after_sign(img_database, img_query)
+        hash_map_rk , top5k_pr_rk = mAPs.get_mAPs_after_sign_with_feature_rerank(img_database, img_query)
+
         return {
             'i2i_by_feature': mAPs.get_mAPs_by_feature(img_database, img_query),
             'i2i_after_sign': hash_map, # mAPs.get_mAPs_after_sign(img_database, img_query),
             'top5k_precision': top5k_pr,
+            'map_after_sign_rerank': hash_map_rk,
+            'top5k_precision_rerank': top5k_pr_rk,
             'i2i_prec_radius_2': prec,
             'i2i_recall_radius_2': rec,
             'i2i_map_radius_2': mmap,
