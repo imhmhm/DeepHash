@@ -416,10 +416,16 @@ class DTQ(object):
         print("%s #validation# calculating MAP@%d" % (datetime.now(), R))
         C_tmp = self.sess.run(self.C)
         mAPs = MAPs_CQ(C_tmp, self.subspace_num, self.subcenter_num, R)
+
+        AQD_mAP, AQD_topk = mAPs.get_mAPs_AQD(img_database, img_query)
+        SQD_mAP, SQD_topk = mAPs.get_mAPs_SQD(img_database, img_query)
+
         self.save_codes(img_database, img_query, C_tmp)
         return {
             'settings': self.file_name,
             'map_feature_ip': mAPs.get_mAPs_by_feature(img_database, img_query),
-            'map_AQD_ip':  mAPs.get_mAPs_AQD(img_database, img_query),
-            'map_SQD_ip': mAPs.get_mAPs_SQD(img_database, img_query)
+            'map_AQD_ip':  AQD_mAP,
+            'top5k_AQD_ip':  AQD_topk,
+            'map_SQD_ip': SQD_mAP,
+            'top5k_SQD_ip':  SQD_topk
         }

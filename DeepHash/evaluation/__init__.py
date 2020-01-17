@@ -240,14 +240,14 @@ class MAPs_CQ:
             Rs = self.R
         q_output = np.dot(query.codes, self.C)
         db_output = np.dot(database.codes, self.C)
-        return get_mAPs(q_output, query.label, db_output, database.label, Rs, dist_type)
+        return get_mAPs_topk(q_output, query.label, db_output, database.label, Rs, dist_type)
 
     def get_mAPs_AQD(self, database, query, Rs=None, dist_type='inner_product'):
         if Rs is None:
             Rs = self.R
         q_output = query.output
         db_output = np.dot(database.codes, self.C)
-        return get_mAPs(q_output, query.label, db_output, database.label, Rs, dist_type)
+        return get_mAPs_topk(q_output, query.label, db_output, database.label, Rs, dist_type)
 
     def get_mAPs_by_feature(self, database, query, Rs=None, dist_type='inner_product'):
         if Rs is None:
