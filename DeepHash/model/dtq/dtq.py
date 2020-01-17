@@ -372,6 +372,8 @@ class DTQ(object):
                 maps = self.validation(img_query, img_database, R)
                 for key in maps:
                     print("{}\t{}".format(key, maps[key]))
+                    if key == 'settings':
+                        continue
                     val_summary.value.add(tag=key, simple_value=maps[key])
             train_writer.add_summary(val_summary, epoch+1)
             train_writer.flush()
