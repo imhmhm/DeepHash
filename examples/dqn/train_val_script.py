@@ -21,7 +21,7 @@ gpu = sys.argv[7]
 log_dir = sys.argv[8]
 data_root = sys.argv[9]
 
-label_dims = {'cifar10': 10, 'cub': 200, 'nuswide_81': 81}
+label_dims = {'cifar10': 10, 'cub': 200, 'nuswide_81': 21, 'coco': 91}
 
 config = {
     'device': '/gpu:' + gpu,

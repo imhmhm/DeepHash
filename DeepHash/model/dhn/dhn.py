@@ -43,11 +43,12 @@ class DHN(object):
 
         self.finetune_all = config['finetune_all']
 
-        self.file_name = 'lr_{}_cqlambda_{}_alpha_{}_dataset_{}'.format(
+        self.file_name = 'lr_{}_cqlambda_{}_alpha_{}_dataset_{}_bit_{}'.format(
             self.learning_rate,
             self.cq_lambda,
             self.alpha,
-            config['dataset'])
+            config['dataset'],
+            self.output_dim)
         self.save_dir = config['save_dir']
         self.save_file = os.path.join(
             config['save_dir'], self.file_name + '.npy')
@@ -239,9 +240,14 @@ class DHN(object):
 
         self.sess.close()
         prec, rec, mmap = mAPs.get_precision_recall_by_Hamming_Radius(img_database, img_query, 2)
+
+        hash_map , top5k_pr = mAPs.get_top5k_after_sign(img_database, img_query)
+
         return {
+            'settings': self.file_name,
             'i2i_by_feature': mAPs.get_mAPs_by_feature(img_database, img_query),
-            'i2i_after_sign': mAPs.get_mAPs_after_sign(img_database, img_query),
+            'i2i_after_sign': hash_map,
+            'top5k_precision': top5k_pr,
             'i2i_prec_radius_2': prec,
             'i2i_recall_radius_2': rec,
             'i2i_map_radius_2': mmap
