@@ -43,12 +43,13 @@ class DHN(object):
 
         self.finetune_all = config['finetune_all']
 
-        self.file_name = 'lr_{}_cqlambda_{}_alpha_{}_dataset_{}_bit_{}'.format(
+        self.file_name = 'lr_{}_cqlambda_{}_alpha_{}_dataset_{}_bit_{}_iter_{}'.format(
             self.learning_rate,
             self.cq_lambda,
             self.alpha,
             config['dataset'],
-            self.output_dim)
+            self.output_dim,
+            self.max_iter)
         self.save_dir = config['save_dir']
         self.save_file = os.path.join(
             config['save_dir'], self.file_name + '.npy')
