@@ -80,7 +80,11 @@ def get_mAPs_rerank(q_output, q_labels, db_output, db_labels, Rs, dist_type):
                 if imatch.shape[0] > Rs:
                     break
 
-        imatch = imatch[0:Rs]
+        if imatch.shape[0] < Rs:
+            imatch = imatch
+            Rs = imatch.shape[0]
+        else:
+            imatch = imatch[0:Rs]
         rel = np.sum(imatch)
         Lx = np.cumsum(imatch)
         Px = Lx.astype(float) / np.arange(1, Rs + 1, 1)
