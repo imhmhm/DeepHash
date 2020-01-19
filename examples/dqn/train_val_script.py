@@ -22,11 +22,13 @@ log_dir = sys.argv[8]
 data_root = sys.argv[9]
 
 label_dims = {'cifar10': 10, 'cub': 200, 'nuswide_81': 21, 'coco': 91}
+Rs = {'cifar10': 59000, 'nuswide_81': 5000, 'coco': 5000,
+      'nuswide_21': 5000, 'imagenet': 5000, 'cifar10_zero_shot': 15000}
 
 config = {
     'device': '/gpu:' + gpu,
     'max_iter': iter_num,
-    'batch_size': 256,
+    'batch_size': 128,
     'val_batch_size': 100,
     'decay_step': 500,                   # Epochs after which learning rate decays.
     'learning_rate_decay_factor': 0.5,   # Learning rate decay factor.
@@ -34,7 +36,8 @@ config = {
 
     'output_dim': output_dim,
 
-    'R': 5,
+    # 'R': 5,
+    'R': Rs[_dataset],
     'model_weights': '../../DeepHash/architecture/pretrained_model/reference_pretrain.npy',
 
     'img_model': 'alexnet',
@@ -51,9 +54,9 @@ config = {
     'n_subcenter': 256,
 
     'label_dim': label_dims[_dataset],
-    'img_tr': "{}/train.txt".format(data_root),
-    'img_te': "{}/test.txt".format(data_root),
-    'img_db': "{}/database.txt".format(data_root),
+    'img_tr': "../../data/{}/train.txt".format(_dataset),
+    'img_te': "../../data/{}/test.txt".format(_dataset),
+    'img_db': "../../data/{}/database.txt".format(_dataset),
     'save_dir': "./models/",
     'log_dir': log_dir,
     'dataset': _dataset
@@ -65,9 +68,16 @@ train_img = dataset.import_train(data_root, config['img_tr'])
 model_weights = model.train(train_img, config)
 
 config['model_weights'] = model_weights
-query_img, database_img = dataset.import_validation(config['img_te'], config['img_db'])
-maps = model.validation(data_root, database_img, query_img, config)
+query_img, database_img = dataset.import_validation(data_root, config['img_te'], config['img_db'])
+maps = model.validation(database_img, query_img, config)
 
+# for key in maps:
+#     print(("{}: {}".format(key, maps[key])))
+result_txt = './result.txt'
+f = open(result_txt, 'a')
 for key in maps:
-    print(("{}: {}".format(key, maps[key])))
+    print(("{}\t{}".format(key, maps[key])))
+    f.write(("{}\t{}\n".format(key, maps[key])))
+f.close()
+
 pprint(config)

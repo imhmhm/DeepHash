@@ -50,11 +50,13 @@ class DQN(object):
 
         self.finetune_all = config['finetune_all']
 
-        self.file_name = 'lr_{}_cqlambda_{}_subspace_num_{}_dataset_{}'.format(
+        self.file_name = 'lr_{}_cqlambda_{}_subspace_num_{}_dataset_{}_bit_{}_iter_{}'.format(
             self.learning_rate,
             self.cq_lambda,
             self.subspace_num,
-            config['dataset'])
+            config['dataset'],
+            self.output_dim,
+            self.max_iter)
         self.save_dir = os.path.join(
             config['save_dir'], self.file_name + '.npy')
         self.log_dir = config['log_dir']
@@ -375,12 +377,17 @@ class DQN(object):
         self.save_codes(img_database, img_query, C_tmp)
 
         mAPs = MAPs_CQ(C_tmp, self.subspace_num, self.subcenter_num, R)
+        AQD_mAP, AQD_topk = mAPs.get_mAPs_AQD(img_database, img_query)
+        SQD_mAP, SQD_topk = mAPs.get_mAPs_SQD(img_database, img_query)
 
         self.sess.close()
         return {
+            'settings': self.file_name,
             'i2i_nocq': mAPs.get_mAPs_by_feature(img_database, img_query),
-            'i2i_AQD': mAPs.get_mAPs_AQD(img_database, img_query),
-            'i2i_SQD': mAPs.get_mAPs_SQD(img_database, img_query)
+            'map_AQD_ip':  AQD_mAP,
+            'top5k_AQD_ip':  AQD_topk,
+            'map_SQD_ip': SQD_mAP,
+            'top5k_SQD_ip':  SQD_topk
         }
 
 
