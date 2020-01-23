@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from distance.npversion import distance
+import sys
 
 class Dataset(object):
     def __init__(self, dataset, output_dim, code_dim):
@@ -55,7 +56,8 @@ class Dataset(object):
                     if select_strategy == 'all':
                         selected_neg = all_neg
                     elif select_strategy == 'margin':
-                        selected_neg = all_neg[np.where(dist[idx_anchor, all_neg] - dist[idx_anchor, idx_pos] < margin)[0]]
+                        # selected_neg = all_neg[np.where(dist[idx_anchor, all_neg] - dist[idx_anchor, idx_pos] < margin)[0]]
+                        selected_neg = all_neg[np.nonzero(dist[idx_anchor, all_neg] - dist[idx_anchor, idx_pos] < margin)[0]]
 
                     if selected_neg.shape[0] > 0:
                         idx_neg = np.random.choice(selected_neg)
