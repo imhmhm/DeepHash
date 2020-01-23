@@ -16,10 +16,11 @@ output_dim = int(sys.argv[2])
 iter_num = int(sys.argv[3])
 cq_lambda = float(sys.argv[4])
 subspace_num = int(sys.argv[5])
-_dataset = sys.argv[6]
-gpu = sys.argv[7]
-log_dir = sys.argv[8]
-data_root = sys.argv[9]
+n_subcenter = int(sys.argv[6])
+_dataset = sys.argv[7]
+gpu = sys.argv[8]
+log_dir = sys.argv[9]
+data_root = sys.argv[10]
 
 label_dims = {'cifar10': 10, 'cub': 200, 'nuswide_81': 21, 'coco': 91}
 Rs = {'cifar10': 59000, 'nuswide_81': 5000, 'coco': 5000,
@@ -51,7 +52,7 @@ config = {
     'cq_lambda': cq_lambda,
     'code_batch_size': 500,
     'n_subspace': subspace_num,
-    'n_subcenter': 256,
+    'n_subcenter': n_subcenter,
 
     'label_dim': label_dims[_dataset],
     'img_tr': "../../data/{}/train.txt".format(_dataset),
