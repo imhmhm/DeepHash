@@ -49,7 +49,7 @@ parser.add_argument('--triplet-thresold', default=64000, type=int)
 parser.add_argument('--save-dir', default="./models/", type=str)
 parser.add_argument('--data-dir', default="~/data/", type=str)
 parser.add_argument('-e', '--evaluate', dest='evaluate', action='store_true')
-parser.add_argument('--val-freq', default=1, type=int)
+parser.add_argument('--val-freq', default=2, type=int)
 
 args = parser.parse_args()
 
